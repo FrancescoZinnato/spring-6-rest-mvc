@@ -104,6 +104,8 @@ public class CustomerControllerTest {
         // eq oltre a controllare l'esattezza del parametro lo rende un matcher, quindi va utilizzato per forza se si passa un parametro specifico
         // o utilizzi tutti valori reali, o tutti matchers
 
+        given(customerService.updateCustomerById(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customer));
+
         mockMvc.perform(put(CustomerController.CUSTOMER_URI_ID, customerId)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -122,6 +124,7 @@ public class CustomerControllerTest {
         //Customer customer = Customer.builder().id(customerId).name("TestDelete").build();
 
         //doNothing().when(customerService).deleteCustomerById(eq(customerId));
+        given(customerService.deleteCustomerById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(CustomerController.CUSTOMER_URI_ID, customerId)
                 .accept(MediaType.APPLICATION_JSON)

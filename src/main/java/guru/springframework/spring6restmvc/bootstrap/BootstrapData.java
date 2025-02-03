@@ -23,7 +23,7 @@ public class BootstrapData implements CommandLineRunner {
     private final CustomerRepository customerRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         loadBeerData();
         loadCustomerData();
     }
@@ -72,21 +72,21 @@ public class BootstrapData implements CommandLineRunner {
         if (customerRepository.count() == 0) {
             Customer customer1 = Customer.builder()
                     .name("Customer 1")
-                    .version(1)
+                    //.version(1)
                     .createdDate(LocalDateTime.now())
                     .updateDate(LocalDateTime.now())
                     .build();
 
             Customer customer2 = Customer.builder()
                     .name("Customer 2")
-                    .version(1)
+                    //.version(1)
                     .createdDate(LocalDateTime.now())
                     .updateDate(LocalDateTime.now())
                     .build();
 
             Customer customer3 = Customer.builder()
                     .name("Customer 3")
-                    .version(1)
+                    //.version(1)
                     .createdDate(LocalDateTime.now())
                     .updateDate(LocalDateTime.now())
                     .build();

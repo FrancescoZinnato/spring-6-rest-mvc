@@ -1,5 +1,6 @@
 package guru.springframework.spring6restmvc.services;
 
+import guru.springframework.spring6restmvc.entities.Beer;
 import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Primary
@@ -35,17 +36,42 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public BeerDTO saveNewBeer(BeerDTO beer) {
-        return null;
+        //return beerMapper.beerToBeerDTO(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
+        Beer beerToSave = beerMapper.beerDtoToBeer(beer); // Stessa cosa ma ogni step separato per rendere più leggibile e manutenibile
+        Beer savedBeer = beerRepository.save(beerToSave);
+        return beerMapper.beerToBeerDTO(savedBeer);
     }
 
     @Override
-    public void updateBeerById(UUID beerId, BeerDTO beer) {
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
+        /*
+        Un'AtomicReference<T> è una classe di Java Concurrency che fornisce un wrapper thread-safe attorno a un oggetto di tipo T.
+        Il suo scopo principale è consentire operazioni atomiche su un riferimento, senza bisogno di sincronizzazione esplicita.
+         */
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
 
+        /*
+        Le variabili locali in Java devono essere effettivamente finali nelle lambda.
+        Poiché dentro la lambda vogliamo aggiornare un valore fuori dal suo scope, l'uso di AtomicReference permette di aggirare questo limite.
+         */
+        beerRepository.findById(beerId).ifPresentOrElse( foundBeer -> {
+            foundBeer.setBeerName(beer.getBeerName());
+            foundBeer.setBeerStyle(beer.getBeerStyle());
+            foundBeer.setUpc(beer.getUpc());
+            foundBeer.setPrice(beer.getPrice());
+            atomicReference.set(Optional.of(beerMapper.beerToBeerDTO(beerRepository.save(foundBeer))));
+        }, () -> atomicReference.set(Optional.empty()));
+
+        return atomicReference.get();
     }
 
     @Override
-    public void deleteById(UUID beerId) {
-
+    public Boolean deleteById(UUID beerId) {
+        if (beerRepository.existsById(beerId)) {
+            beerRepository.deleteById(beerId);
+            return true;
+        }
+        return false;
     }
 
     @Override

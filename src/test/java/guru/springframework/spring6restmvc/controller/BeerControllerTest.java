@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
@@ -112,6 +111,7 @@ class BeerControllerTest {
         UUID beerId = UUID.randomUUID();
         BeerDTO testBeer = BeerDTO.builder().id(beerId).build();
 
+        given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(testBeer));
         //doNothing().when(beerService).updateBeerById(eq(beerId), any(Beer.class));
 
         mockMvc.perform(put("/api/v1/beer/" + beerId)
@@ -131,7 +131,8 @@ class BeerControllerTest {
         UUID beerId = UUID.randomUUID();
         //BeerDTO testBeer = BeerDTO.builder().id(beerId).build();
 
-        doNothing().when(beerService).deleteById(eq(beerId));
+        given(beerService.deleteById(any(UUID.class))).willReturn(true);
+        //doNothing().when(beerService).deleteById(eq(beerId));
 
         mockMvc.perform(delete("/api/v1/beer/" + beerId)
         .accept(MediaType.APPLICATION_JSON)
