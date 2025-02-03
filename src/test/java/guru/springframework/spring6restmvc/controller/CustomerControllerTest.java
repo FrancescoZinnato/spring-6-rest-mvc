@@ -13,17 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,7 +67,7 @@ public class CustomerControllerTest {
         UUID customerId = UUID.randomUUID();
         Customer customer = Customer.builder().id(customerId).name("TestGetId").build();
 
-        given(customerService.getCustomerById(customerId)).willReturn(customer);
+        given(customerService.getCustomerById(customerId)).willReturn(Optional.of(customer));
 
         mockMvc.perform(get(CustomerController.CUSTOMER_URI_ID, customerId)
                 .accept(MediaType.APPLICATION_JSON))
@@ -124,7 +119,7 @@ public class CustomerControllerTest {
     @Test
     void testDeleteCustomer() throws Exception {
         UUID customerId = UUID.randomUUID();
-        Customer customer = Customer.builder().id(customerId).name("TestDelete").build();
+        //Customer customer = Customer.builder().id(customerId).name("TestDelete").build();
 
         //doNothing().when(customerService).deleteCustomerById(eq(customerId));
 
