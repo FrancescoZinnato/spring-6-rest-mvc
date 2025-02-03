@@ -65,7 +65,7 @@ public class BeerController {
     @GetMapping("/{beerId}")
     public Beer getBeerById(@PathVariable("beerId") UUID beerId){
 
-        log.debug("Get Beer by Id - in controller");
+        log.debug("Get Beer by Id - in controller asdasdsadasda");
 
         return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
         // Possibile perchè ora restituisco un Optional<Beer> dal service, quindi se Beer esiste bene, sennò lancia una NotFoundException

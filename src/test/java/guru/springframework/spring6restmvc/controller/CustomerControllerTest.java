@@ -136,6 +136,7 @@ public class CustomerControllerTest {
     @Test
     void testPatchCustomer() throws Exception {
         UUID customerId = UUID.randomUUID();
+        
 
         Map<String, Object> customerMap = new HashMap<>();
         customerMap.put("name", "Patched Name");
