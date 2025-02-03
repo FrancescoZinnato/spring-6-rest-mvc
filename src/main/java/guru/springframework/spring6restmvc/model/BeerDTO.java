@@ -10,8 +10,8 @@ import java.util.UUID;
 /**
  * Created by jt, Spring Framework Guru.
  */
-@Builder
 @Data
+@Builder
 public class BeerDTO {
     private UUID id;
     private Integer version;
