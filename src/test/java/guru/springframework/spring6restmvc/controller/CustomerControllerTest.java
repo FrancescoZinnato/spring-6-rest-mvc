@@ -1,7 +1,7 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.springframework.spring6restmvc.model.Customer;
+import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.services.CustomerService;
 import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ public class CustomerControllerTest {
     @MockitoBean
     CustomerService customerService;
     @Captor
-    ArgumentCaptor<Customer> customerCaptor;
+    ArgumentCaptor<CustomerDTO> customerCaptor;
     @Captor
     ArgumentCaptor<UUID> uuidCaptor;
 
@@ -51,7 +51,7 @@ public class CustomerControllerTest {
 
     @Test
     void testGetAllCustomers() throws Exception {
-        List<Customer> customers = customerServiceImpl.getAllCustomers();
+        List<CustomerDTO> customers = customerServiceImpl.getAllCustomers();
 
         given(customerService.getAllCustomers()).willReturn(customers);
 
@@ -65,7 +65,7 @@ public class CustomerControllerTest {
     @Test
     void testGetCustomerById() throws Exception {
         UUID customerId = UUID.randomUUID();
-        Customer customer = Customer.builder().id(customerId).name("TestGetId").build();
+        CustomerDTO customer = CustomerDTO.builder().id(customerId).name("TestGetId").build();
 
         given(customerService.getCustomerById(customerId)).willReturn(Optional.of(customer));
 
@@ -79,7 +79,7 @@ public class CustomerControllerTest {
     @Test
     void testPostCustomer() throws Exception {
         UUID customerId = UUID.randomUUID();
-        Customer customer = Customer.builder().id(customerId).name("TestPost").build();
+        CustomerDTO customer = CustomerDTO.builder().id(customerId).name("TestPost").build();
 
         given(customerService.saveNewCustomer(any())).willReturn(customer);
 
@@ -96,7 +96,7 @@ public class CustomerControllerTest {
     @Test
     void testPutCustomer() throws Exception {
         UUID customerId = UUID.randomUUID();
-        Customer customer = Customer.builder().id(customerId).name("TestPut").build();
+        CustomerDTO customer = CustomerDTO.builder().id(customerId).name("TestPut").build();
 
         //doNothing().when(customerService).updateCustomerById(eq(customerId), any());
         // eq viene usato per controllare che il parametro sia esattemente quello passato

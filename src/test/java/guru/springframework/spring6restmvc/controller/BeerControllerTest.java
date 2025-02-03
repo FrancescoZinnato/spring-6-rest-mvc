@@ -1,7 +1,7 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.springframework.spring6restmvc.model.Beer;
+import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.services.BeerService;
 import guru.springframework.spring6restmvc.services.BeerServiceImpl;
@@ -10,12 +10,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -26,7 +23,6 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,7 +40,7 @@ class BeerControllerTest {
     @Captor
     ArgumentCaptor<UUID> uuidCaptor;
     @Captor
-    ArgumentCaptor<Beer> beerCaptor;
+    ArgumentCaptor<BeerDTO> beerCaptor;
 
     @MockitoBean //Tells Mockito to provide a "mock" of this in the Spring Context, return null by default
     BeerService beerService;
@@ -65,7 +61,7 @@ class BeerControllerTest {
     void getBeerById() throws Exception {
         //Beer testBeer = beerServiceImpl.listBeers().get(0);
         UUID beerId = UUID.randomUUID();
-        Beer testBeer = Beer.builder()
+        BeerDTO testBeer = BeerDTO.builder()
                 .id(beerId)
                 .beerName("Test Beer")
                 .beerStyle(BeerStyle.IPA)
@@ -85,7 +81,7 @@ class BeerControllerTest {
 
     @Test
     void testListBeers() throws Exception {
-        List<Beer> testBeers = beerServiceImpl.listBeers();
+        List<BeerDTO> testBeers = beerServiceImpl.listBeers();
 
         given(beerService.listBeers()).willReturn(testBeers);
 
@@ -99,9 +95,9 @@ class BeerControllerTest {
     @Test
     void testCreateBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        Beer testBeer = Beer.builder().id(beerId).beerName("TestPost").beerStyle(BeerStyle.IPA).build();
+        BeerDTO testBeer = BeerDTO.builder().id(beerId).beerName("TestPost").beerStyle(BeerStyle.IPA).build();
 
-        given(beerService.saveNewBeer(any(Beer.class))).willReturn(testBeer);
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(testBeer);
 
         mockMvc.perform(post("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON)
@@ -114,7 +110,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        Beer testBeer = Beer.builder().id(beerId).build();
+        BeerDTO testBeer = BeerDTO.builder().id(beerId).build();
 
         //doNothing().when(beerService).updateBeerById(eq(beerId), any(Beer.class));
 
@@ -133,7 +129,7 @@ class BeerControllerTest {
     @Test
     void testDeleteBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        Beer testBeer = Beer.builder().id(beerId).build();
+        //BeerDTO testBeer = BeerDTO.builder().id(beerId).build();
 
         doNothing().when(beerService).deleteById(eq(beerId));
 
