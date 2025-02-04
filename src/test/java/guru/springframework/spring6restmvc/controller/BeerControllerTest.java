@@ -128,7 +128,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        BeerDTO testBeer = BeerDTO.builder().id(beerId).build();
+        BeerDTO testBeer = beerServiceImpl.listBeers().getFirst();
 
         given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(testBeer));
         //doNothing().when(beerService).updateBeerById(eq(beerId), any(Beer.class));
@@ -143,6 +143,23 @@ class BeerControllerTest {
 
         assertThat(uuidCaptor.getValue()).isEqualTo(beerId);
         assertThat(beerCaptor.getValue()).isEqualTo(testBeer);
+    }
+
+    @Test
+    void testUpdateBeerNullName() throws Exception {
+        UUID beerId = UUID.randomUUID();
+        BeerDTO testBeer = beerServiceImpl.listBeers().getFirst();
+        testBeer.setBeerName("");
+
+        given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(testBeer));
+        //doNothing().when(beerService).updateBeerById(eq(beerId), any(Beer.class));
+
+        mockMvc.perform(put("/api/v1/beer/" + beerId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testBeer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
     }
 
     @Test
