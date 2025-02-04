@@ -4,6 +4,7 @@ import guru.springframework.spring6restmvc.model.BeerStyle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -27,11 +28,14 @@ public class Beer {
     private Integer version;
     @NotBlank
     @NotNull
+    @Size(max = 50) // Bean validation constraint per evitare che arrivino dati invalidi al DB, quindi previene l'invio di un'eccezione dal database
+    @Column(length = 50)
     private String beerName;
     @NotNull
     private BeerStyle beerStyle;
     @NotBlank
     @NotNull
+    @Size(max = 255)
     private String upc;
     private Integer quantityOnHand;
     @NotNull
