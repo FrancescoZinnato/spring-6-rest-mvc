@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -92,9 +93,27 @@ class BeerControllerTest {
     }
 
     @Test
+    void testCreateBeerNullName() throws Exception {
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().getFirst());
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/beer")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6))) // Mi aspetto 6 errori di validazione
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
     void testCreateBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        BeerDTO testBeer = BeerDTO.builder().id(beerId).beerName("TestPost").beerStyle(BeerStyle.IPA).build();
+        BeerDTO testBeer = BeerDTO.builder().id(beerId).beerName("TestPost")
+                .price(BigDecimal.valueOf(4.99)).upc("upc").beerStyle(BeerStyle.IPA).build();
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(testBeer);
 
