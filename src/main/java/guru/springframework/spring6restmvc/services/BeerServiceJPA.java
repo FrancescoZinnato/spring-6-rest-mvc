@@ -33,8 +33,16 @@ public class BeerServiceJPA implements BeerService {
             return beerMapper.beersToBeerDTOs(listBeersByStyle(beerStyle));
         }
 
+        if(StringUtils.hasText(beerName) && beerStyle != null) {
+            return beerMapper.beersToBeerDTOs(listBeersByStyleAndName(beerStyle, beerName));
+        }
+
         //return beerRepository.findAll().stream().map(beerMapper::beerToBeerDTO).collect(Collectors.toList());
         return beerMapper.beersToBeerDTOs(beerRepository.findAll()); // Utilizza la capacità di MapStruct di mappare le liste (più veloce di .stream)
+    }
+
+    private List<Beer> listBeersByStyleAndName(BeerStyle beerStyle, String beerName) {
+        return beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(beerStyle, "%" + beerName + "%");
     }
 
     private List<Beer> listBeersByName(String beerName) {

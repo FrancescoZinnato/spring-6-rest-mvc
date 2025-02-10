@@ -32,6 +32,20 @@ class BeerRepositoryTest {
     }
 
     @Test
+    void testGetBeerListByStyle() {
+        List<Beer> list = beerRepository.findAllByBeerStyle(BeerStyle.IPA);
+
+        assertThat(list.size()).isEqualTo(548);
+    }
+
+    @Test
+    void testGetBeerListByStyleAndName() {
+        List<Beer> list = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.IPA, "%IPA%");
+
+        assertThat(list.size()).isEqualTo(310);
+    }
+
+    @Test
     void testSaveBeerNameTooLong() {
 
         assertThrows(ConstraintViolationException.class, () -> { // Avendo aggiunto l'annotazione @Size(max=50) ora ottengo questa eccezione, solo con @Column(length=50) invece otterrei una DataIntegrityViolationException
