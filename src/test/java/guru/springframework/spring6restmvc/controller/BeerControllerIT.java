@@ -52,6 +52,14 @@ class BeerControllerIT {
     }
 
     @Test
+    void testListBeersByName() throws Exception {
+        mockMvc.perform(get("/api/v1/beer")
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(100)));
+    }
+
+    @Test
     void testPatchBeerBadName() throws Exception {
         Beer beer = beerRepository.findAll().getFirst();
 
@@ -114,7 +122,7 @@ class BeerControllerIT {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> list = beerController.listBeers();
+        List<BeerDTO> list = beerController.listBeers(null);
 
         assertThat(list.size()).isEqualTo(2413); //2413 se carichi il csv delle birre
     }
@@ -124,7 +132,7 @@ class BeerControllerIT {
     @Test
     void testEmptyListBeers() {
         beerRepository.deleteAll();
-        List<BeerDTO> list = beerController.listBeers();
+        List<BeerDTO> list = beerController.listBeers(null);
 
         assertThat(list.size()).isEqualTo(0);
     }

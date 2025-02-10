@@ -34,8 +34,8 @@ public class BootstrapData implements CommandLineRunner {
     @Transactional
     @Override
     public void run(String... args) throws FileNotFoundException {
-        loadCsvData();
         loadBeerData();
+        loadCsvData();
         loadCustomerData();
     }
 
