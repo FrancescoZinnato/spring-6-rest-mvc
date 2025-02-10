@@ -81,9 +81,9 @@ class BeerControllerTest {
 
     @Test
     void testListBeers() throws Exception {
-        List<BeerDTO> testBeers = beerServiceImpl.listBeers(null);
+        List<BeerDTO> testBeers = beerServiceImpl.listBeers(null, null);
 
-        given(beerService.listBeers(null)).willReturn(testBeers);
+        given(beerService.listBeers(null, null)).willReturn(testBeers);
 
         mockMvc.perform(get("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON))
@@ -96,7 +96,7 @@ class BeerControllerTest {
     void testCreateBeerNullName() throws Exception {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null).getFirst());
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null, null).getFirst());
 
         MvcResult mvcResult = mockMvc.perform(post("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeer() throws Exception {
         UUID beerId = UUID.randomUUID();
-        BeerDTO testBeer = beerServiceImpl.listBeers(null).getFirst();
+        BeerDTO testBeer = beerServiceImpl.listBeers(null, null).getFirst();
 
         given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(testBeer));
         //doNothing().when(beerService).updateBeerById(eq(beerId), any(Beer.class));
@@ -148,7 +148,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeerNullName() throws Exception {
         UUID beerId = UUID.randomUUID();
-        BeerDTO testBeer = beerServiceImpl.listBeers(null).getFirst();
+        BeerDTO testBeer = beerServiceImpl.listBeers(null, null).getFirst();
         testBeer.setBeerName("");
 
         given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(testBeer));
