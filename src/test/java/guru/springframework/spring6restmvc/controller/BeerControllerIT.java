@@ -116,7 +116,7 @@ class BeerControllerIT {
     void testListBeers() {
         List<BeerDTO> list = beerController.listBeers();
 
-        assertThat(list.size()).isEqualTo(3);
+        assertThat(list.size()).isEqualTo(2413); //2413 se carichi il csv delle birre
     }
 
     @Rollback // We want to tell Spring to roll back the persistence operations done in this test to avoid errors on others
