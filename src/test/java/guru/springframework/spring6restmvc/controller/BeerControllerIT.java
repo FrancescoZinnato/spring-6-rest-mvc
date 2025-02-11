@@ -6,10 +6,12 @@ import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -53,19 +56,33 @@ class BeerControllerIT {
     }
 
     @Test
+    void testListBeerByStyleAndNamePaging() throws Exception {
+        mockMvc.perform(get("/api/v1/beer")
+                    .queryParam("beerName", "IPA")
+                    .queryParam("beerStyle", BeerStyle.IPA.name())
+                    .queryParam("pageNumber", "2")
+                    .queryParam("pageSize", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()", is(50))); //11
+                //.andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
-                        .queryParam("beerStyle", BeerStyle.IPA.name()))
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(548)));
+                .andExpect(jsonPath("$.content.size()", is(548)));
     }
 
     @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
-                .queryParam("beerName", "IPA"))
+                .queryParam("beerName", "IPA")
+                .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(336)));
+                .andExpect(jsonPath("$.content.size()", is(336)));
     }
 
     @Test
@@ -131,9 +148,9 @@ class BeerControllerIT {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> list = beerController.listBeers(null, null);
+        Page<BeerDTO> list = beerController.listBeers(null, null, 1, 2413);
 
-        assertThat(list.size()).isEqualTo(2413); //2413 se carichi il csv delle birre
+        assertThat(list.getContent().size()).isEqualTo(1000); //2413 se carichi il csv delle birre //1000 ritorno massimo impostato della page
     }
 
     @Rollback // We want to tell Spring to roll back the persistence operations done in this test to avoid errors on others
@@ -141,9 +158,9 @@ class BeerControllerIT {
     @Test
     void testEmptyListBeers() {
         beerRepository.deleteAll();
-        List<BeerDTO> list = beerController.listBeers(null, null);
+        Page<BeerDTO> list = beerController.listBeers(null, null, 1, 25);
 
-        assertThat(list.size()).isEqualTo(0);
+        assertThat(list.getContent().size()).isEqualTo(0);
     }
 
     @Test

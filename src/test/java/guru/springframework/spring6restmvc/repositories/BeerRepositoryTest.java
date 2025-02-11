@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 //import org.springframework.dao.DataIntegrityViolationException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,23 +27,23 @@ class BeerRepositoryTest {
 
     @Test
     void testGetBeerListByName() {
-        List<Beer> list = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%"); // Ogni nome che contiene IPA nel nome
+        Page<Beer> list = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%", null); // Ogni nome che contiene IPA nel nome
 
-        assertThat(list.size()).isEqualTo(336);
+        assertThat(list.getContent().size()).isEqualTo(336);
     }
 
     @Test
     void testGetBeerListByStyle() {
-        List<Beer> list = beerRepository.findAllByBeerStyle(BeerStyle.IPA);
+        Page<Beer> list = beerRepository.findAllByBeerStyle(BeerStyle.IPA, null);
 
-        assertThat(list.size()).isEqualTo(548);
+        assertThat(list.getContent().size()).isEqualTo(548);
     }
 
     @Test
     void testGetBeerListByStyleAndName() {
-        List<Beer> list = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.IPA, "%IPA%");
+        Page<Beer> list = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.IPA, "%IPA%", null);
 
-        assertThat(list.size()).isEqualTo(310);
+        assertThat(list.getContent().size()).isEqualTo(310);
     }
 
     @Test
