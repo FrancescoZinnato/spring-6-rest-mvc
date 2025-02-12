@@ -1,6 +1,7 @@
 package guru.springframework.spring6restmvc.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
@@ -26,7 +27,7 @@ public class BeerOrder {
         this.customerRef = customerRef;
         this.setCustomer(customer);
         this.beerOrderLines = beerOrderLines;
-        this.beerOrderShipment = beerOrderShipment;
+        this.setBeerOrderShipment(beerOrderShipment);
     }
 
     @Id
@@ -64,7 +65,12 @@ public class BeerOrder {
     @OneToMany(mappedBy = "beerOrder")
     private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST) // Salva l'entità BeerOrder se quella contenuta in BeerOrderShipment non è salvata // Perchè va fatto solo da un lato della relazione?
     private BeerOrderShipment beerOrderShipment;
+
+    public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
+        this.beerOrderShipment = beerOrderShipment;
+        beerOrderShipment.setBeerOrder(this);
+    }
 
 }
