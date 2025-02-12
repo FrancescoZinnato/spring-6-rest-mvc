@@ -11,10 +11,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Entity
 @Builder
 public class BeerOrderLine {
+
+    public BeerOrderLine(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, Integer orderQuantity, Integer quantityAllocated, BeerOrder beerOrder, Beer beer) {
+        this.id = id;
+        this.version = version;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.orderQuantity = orderQuantity;
+        this.quantityAllocated = quantityAllocated;
+        this.setBeerOrder(beerOrder);
+        this.setBeer(beer);
+    }
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -43,6 +54,16 @@ public class BeerOrderLine {
     @ManyToOne
     private BeerOrder beerOrder;
 
+    public void setBeerOrder(BeerOrder beerOrder) {
+        this.beerOrder = beerOrder;
+        beerOrder.getBeerOrderLines().add(this);
+    }
+
     @ManyToOne
     private Beer beer;
+
+    public void setBeer(Beer beer) {
+        this.beer = beer;
+        beer.getBeerOrderLines().add(this);
+    }
 }
