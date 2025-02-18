@@ -31,6 +31,8 @@ import static org.hamcrest.core.Is.is;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,24 +54,27 @@ class BeerControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
     void testListBeerByStyleAndNamePaging() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
+                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
                     .queryParam("beerName", "IPA")
                     .queryParam("beerStyle", BeerStyle.IPA.name())
                     .queryParam("pageNumber", "2")
                     .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(50))); //11
-                //.andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
     }
 
     @Test
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
+                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
@@ -79,6 +84,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
+                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
                 .queryParam("beerName", "IPA")
                 .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
@@ -93,6 +99,7 @@ class BeerControllerIT {
         beerMap.put("beerName", "Out of bound name too longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
 
         MvcResult result = mockMvc.perform(patch("/api/v1/beer/" + beer.getId())
+                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
@@ -191,7 +198,6 @@ class BeerControllerIT {
 
         String[] locationUUID = responseEntity.getHeaders().getLocation().getPath().split("/");
         UUID savedUUID = UUID.fromString(locationUUID[locationUUID.length - 1]); // Dall'ultimo slash
-        //UUID savedUUID = UUID.fromString(locationUUID[4]); // Il quarto slash nell'URI
 
         Beer beer = beerRepository.findById(savedUUID).get();
         assertThat(beer).isNotNull();
