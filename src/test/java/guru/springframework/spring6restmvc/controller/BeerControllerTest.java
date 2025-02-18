@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -33,7 +35,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BeerController.class)
-//@Import(SpringSecConfig.class) // Se importo questa classe di securityConfig per far passare anche le richieste non GET, si rompe tutto
+//@Import(SpringSecConfig.class) // Se importo questa classe di securityConfig per far passare anche le richieste non GET,
+                                 // si rompe tutto perchè @WebMvcTest carica un contesto parziale che non include tutti i bean necessari alla creazione della classe di configurazione della sicurezza
+                                 // si consiglia di usare @SpringBootTest se c'è bisogno di testare anche la sicurezza
+                                 // che mi dà comunque errore quindi o non ci ho capito un cazzo o c'è qualcosa che mi sfugge
+//@SpringBootTest
+//@AutoConfigureMockMvc
 class BeerControllerTest {
 
     //@Autowired
