@@ -15,7 +15,7 @@ public class SpringSecConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .httpBasic(withDefaults());
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
         return http.build();
     }
 
