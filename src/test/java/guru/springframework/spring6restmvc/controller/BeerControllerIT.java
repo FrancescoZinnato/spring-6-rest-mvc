@@ -62,7 +62,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndNamePaging() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                     .queryParam("beerName", "IPA")
                     .queryParam("beerStyle", BeerStyle.IPA.name())
                     .queryParam("pageNumber", "2")
@@ -74,7 +74,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
@@ -84,7 +84,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get("/api/v1/beer")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                 .queryParam("beerName", "IPA")
                 .queryParam("pageSize", "1000"))
                 .andExpect(status().isOk())
@@ -99,7 +99,7 @@ class BeerControllerIT {
         beerMap.put("beerName", "Out of bound name too longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
 
         MvcResult result = mockMvc.perform(patch("/api/v1/beer/" + beer.getId())
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
