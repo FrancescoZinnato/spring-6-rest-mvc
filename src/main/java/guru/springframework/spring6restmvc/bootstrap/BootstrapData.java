@@ -21,9 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by jt, Spring Framework Guru.
- */
+
 @Component
 @RequiredArgsConstructor
 public class BootstrapData implements CommandLineRunner {

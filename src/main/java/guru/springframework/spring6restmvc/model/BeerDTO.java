@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Created by jt, Spring Framework Guru.
+ * Pojo class representative of the entity {@link guru.springframework.spring6restmvc.entities.Beer Beer}
  */
 @Data
 @Builder
