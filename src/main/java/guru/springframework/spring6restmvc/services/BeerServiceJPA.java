@@ -6,6 +6,8 @@ import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @Service
 @Primary
 @RequiredArgsConstructor
@@ -28,8 +31,11 @@ public class BeerServiceJPA implements BeerService {
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;
 
+    @Cacheable(cacheNames = "beerListCache")
     @Override
     public Page<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Integer pageNumber, Integer pageSize) {
+
+        log.info("listBeers - In BeerServiceJPA");
 
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
 
@@ -100,8 +106,11 @@ public class BeerServiceJPA implements BeerService {
         return beerRepository.findAll(pageable);
     }
 
+    @Cacheable(cacheNames = "beerCache", key = "#id")
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
+        log.info("getBeerById - In BeerServiceJPA");
+
         //return Optional.ofNullable(beerMapper.beerToBeerDTO(beerRepository.findById(id).orElse(null)));
         return beerRepository.findById(id).map(beerMapper::beerToBeerDTO); // Evita null, l'optional sarà già vuoto - Segue il paradigma di Optional
         //return beerMapper.beerToBeerDTO(beerRepository.findById(id)); // Soluzione se implementi il ritorno di Optional direttamente nel Mapper
