@@ -1,22 +1,26 @@
 package guru.springframework.spring6restmvc.services;
 
 import guru.springframework.spring6restmvc.entities.Beer;
+import guru.springframework.spring6restmvc.events.BeerCreatedEvent;
 import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
@@ -27,6 +31,8 @@ public class BeerServiceJPA implements BeerService {
 
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
+    private final CacheManager cacheManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;
@@ -106,6 +112,11 @@ public class BeerServiceJPA implements BeerService {
         return beerRepository.findAll(pageable);
     }
 
+    private void clearBeerCacheAndBeerListCache(UUID beerId) {
+        Objects.requireNonNull(cacheManager.getCache("beerCache")).evict(beerId);
+        Objects.requireNonNull(cacheManager.getCache("beerListCache")).clear();
+    }
+
     @Cacheable(cacheNames = "beerCache", key = "#id")
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
@@ -118,14 +129,20 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public BeerDTO saveNewBeer(BeerDTO beer) {
+        Objects.requireNonNull(cacheManager.getCache("beerListCache")).clear();
         //return beerMapper.beerToBeerDTO(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
         Beer beerToSave = beerMapper.beerDtoToBeer(beer); // Stessa cosa ma ogni step separato per rendere più leggibile e manutenibile
-        Beer savedBeer = beerRepository.save(beerToSave);
+        Beer savedBeer = beerRepository.save(beerToSave); // Inoltre questo oggetto mi serve per pubblicare l'evento
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        applicationEventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, auth));
+
         return beerMapper.beerToBeerDTO(savedBeer);
     }
 
     @Override
     public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
+        clearBeerCacheAndBeerListCache(beerId);
         /*
         Un'AtomicReference<T> è una classe di Java Concurrency che fornisce un wrapper thread-safe attorno a un oggetto di tipo T.
         Il suo scopo principale è consentire operazioni atomiche su un riferimento, senza bisogno di sincronizzazione esplicita.
@@ -147,8 +164,18 @@ public class BeerServiceJPA implements BeerService {
         return atomicReference.get();
     }
 
+    // Non funziona per la natura di come l'AspectOrientedProgramming funziona, l'EvictionProxy viene ignorato
+    /*
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "beerCache", key = "#beerId"),
+            @CacheEvict(cacheNames = "beerListCache")
+    })
+    */
+    // Quindi aggiriamo il problema instanziando un CacheManager per eliminare i dati
     @Override
     public Boolean deleteById(UUID beerId) {
+        clearBeerCacheAndBeerListCache(beerId);
+
         if (beerRepository.existsById(beerId)) {
             beerRepository.deleteById(beerId);
             return true;
@@ -158,6 +185,8 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
+        clearBeerCacheAndBeerListCache(beerId);
+
         AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
 
         beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
