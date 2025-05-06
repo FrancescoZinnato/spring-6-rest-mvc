@@ -134,6 +134,7 @@ public class BeerServiceJPA implements BeerService {
         Beer beerToSave = beerMapper.beerDtoToBeer(beer); // Stessa cosa ma ogni step separato per rendere più leggibile e manutenibile
         Beer savedBeer = beerRepository.save(beerToSave); // Inoltre questo oggetto mi serve per pubblicare l'evento
 
+        log.info("Current thread name: {} \n Current thread id: {}", Thread.currentThread().getName(), Thread.currentThread().threadId());
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         applicationEventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, auth));
 
