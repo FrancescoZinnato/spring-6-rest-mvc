@@ -26,7 +26,7 @@ public class BeerOrder {
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
-        this.beerOrderLines = beerOrderLines;
+        this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
     }
 
@@ -57,20 +57,31 @@ public class BeerOrder {
     private Customer customer;
 
     public void setCustomer(Customer customer) {
-        this.customer = customer;
-        customer.getBeerOrders().add(this);
+        if(customer != null) {
+            this.customer = customer;
+            customer.getBeerOrders().add(this);
+        }
     }
 
     @Builder.Default
-    @OneToMany(mappedBy = "beerOrder")
-    private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
+    private Set<BeerOrderLine> beerOrderLines; //  = new HashSet<>() ??
 
     @OneToOne(cascade = CascadeType.PERSIST) // Salva l'entità BeerOrder se quella contenuta in BeerOrderShipment non è salvata // Perchè va fatto solo da un lato della relazione?
     private BeerOrderShipment beerOrderShipment;
 
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
-        this.beerOrderShipment = beerOrderShipment;
-        beerOrderShipment.setBeerOrder(this);
+        if(beerOrderShipment != null) {
+            this.beerOrderShipment = beerOrderShipment;
+            beerOrderShipment.setBeerOrder(this);
+        }
+    }
+
+    public void setBeerOrderLines(Set<BeerOrderLine> beerOrderLines) {
+        if(beerOrderLines != null) {
+            this.beerOrderLines = beerOrderLines;
+            beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
+        }
     }
 
 }

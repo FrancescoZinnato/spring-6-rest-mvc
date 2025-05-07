@@ -2,6 +2,7 @@ package guru.springframework.spring6restmvc.entities;
 
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
@@ -36,6 +37,7 @@ public class BeerOrderShipment {
     @Version
     private Long version;
 
+    @NotBlank
     private String trackingNumber;
 
     @CreationTimestamp
