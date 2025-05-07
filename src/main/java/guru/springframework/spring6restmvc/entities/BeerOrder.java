@@ -63,7 +63,6 @@ public class BeerOrder {
         }
     }
 
-    @Builder.Default
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
     private Set<BeerOrderLine> beerOrderLines; //  = new HashSet<>() ??
 
