@@ -58,15 +58,20 @@ public class BeerOrderLine {
     private BeerOrder beerOrder;
 
     public void setBeerOrder(BeerOrder beerOrder) {
-        this.beerOrder = beerOrder;
-        beerOrder.getBeerOrderLines().add(this);
+        if (beerOrder != null) {
+            this.beerOrder = beerOrder;
+            beerOrder.getBeerOrderLines().add(this);
+        }
     }
 
     @ManyToOne
     private Beer beer;
 
     public void setBeer(Beer beer) {
-        this.beer = beer;
-        beer.getBeerOrderLines().add(this);
+        if (beer != null) {
+            this.beer = beer;
+            beer.getBeerOrderLines().add(this);
+        }
     }
+
 }

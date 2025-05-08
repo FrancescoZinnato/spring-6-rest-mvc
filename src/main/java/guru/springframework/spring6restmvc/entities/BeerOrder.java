@@ -26,7 +26,8 @@ public class BeerOrder {
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
-        this.setBeerOrderLines(beerOrderLines);
+        this.beerOrderLines = beerOrderLines;
+        //this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
     }
 
@@ -63,8 +64,14 @@ public class BeerOrder {
         }
     }
 
+    /**
+     * IMPORTANT: The {@code new HashSet<>()} init of the property is a MUST,
+     * needed to avoid the creation of an Immutable Set that will cause problems with data init.
+     * Also, the @Builder.Default annotation will tell Lombok to init an HashSet by default
+     */
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
-    private Set<BeerOrderLine> beerOrderLines; //  = new HashSet<>() ??
+    @Builder.Default
+    private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.PERSIST) // Salva l'entità BeerOrder se quella contenuta in BeerOrderShipment non è salvata // Perchè va fatto solo da un lato della relazione?
     private BeerOrderShipment beerOrderShipment;
