@@ -1,21 +1,20 @@
 package guru.springframework.spring6restmvc.model;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Builder
-public class BeerOrderCreateDTO {
-
-    private String customerRef;
+public class BeerOrderLineCreateDTO {
 
     @NotNull
-    private UUID customerId;
+    private UUID beerId;
 
-    private Set<BeerOrderLineCreateDTO> beerOrderLines;
+    @Min(value = 1, message = "orderQuantity must be > 0")
+    private Integer orderQuantity;
 
 }
