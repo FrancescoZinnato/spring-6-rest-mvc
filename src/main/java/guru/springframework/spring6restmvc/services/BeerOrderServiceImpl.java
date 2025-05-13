@@ -39,6 +39,15 @@ public class BeerOrderServiceImpl implements BeerOrderService {
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;
 
+    @Override
+    public void deleteBeerOrder(UUID beerOrderId) {
+        if(beerOrderRepository.existsById(beerOrderId)) {
+            beerOrderRepository.deleteById(beerOrderId);
+        } else {
+            throw new NotFoundException("Beer Order Not Found");
+        }
+    }
+
     @Override //Non utilizzato
     public Optional<BeerOrderDTO> updateBeerOrder(UUID beerOrderId, BeerOrderCreateDTO beerOrderCreateDTO) {
         Customer customer = customerRepository.findById(beerOrderCreateDTO.getCustomerId()).orElseThrow(NotFoundException::new);
@@ -114,7 +123,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
     @Override
     public BeerOrderDTO createBeerOrder(BeerOrderCreateDTO beerOrderCreateDTO) {
         /*
-        * Nel beerOrderCreateDTO ho solo l'id di riferimento del Customer, ed i suoi orderLines sono fatti da BeerOrderLineCreateDTO che hanno solo l'id di riferimento alla birra
+        * Nel beerOrderCreateDTO ho solo l'id di riferimento del Customer, e i suoi orderLines sono fatti da BeerOrderLineCreateDTO che hanno solo l'id di riferimento alla birra
         * Quindi devo trovare il Customer utilizzando il suo id nel beerOrderCreateDTO, e devo rifare il Set di BeerOrderLine
         * iterando sul set in beerOrderCreateDTO, e per ogni elemento, utilizzare il beerId salvato per recuperare la Beer
         * in modo da poter creare il BeerOrderLine con l'intero oggetto Beer
