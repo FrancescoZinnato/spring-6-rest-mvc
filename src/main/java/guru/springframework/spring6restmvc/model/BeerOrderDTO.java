@@ -3,6 +3,7 @@ package guru.springframework.spring6restmvc.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,8 @@ public class BeerOrderDTO {
     private Timestamp lastModifiedDate;
 
     private String customerRef;
+
+    private BigDecimal paymentAmount;
 
     private CustomerDTO customer;
 

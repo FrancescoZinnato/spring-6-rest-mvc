@@ -28,4 +28,6 @@ public class BeerOrderLineDTO {
 
     private BeerDTO beer;
 
+    private BeerOrderLineStatus orderLineStatus;
+
 }

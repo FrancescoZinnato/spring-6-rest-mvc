@@ -1,5 +1,6 @@
 package guru.springframework.spring6restmvc.entities;
 
+import guru.springframework.spring6restmvc.model.BeerOrderLineStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Builder
 public class BeerOrderLine {
 
-    public BeerOrderLine(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, Integer orderQuantity, Integer quantityAllocated, BeerOrder beerOrder, Beer beer) {
+    public BeerOrderLine(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, Integer orderQuantity, Integer quantityAllocated, BeerOrder beerOrder, Beer beer, BeerOrderLineStatus beerOrderLineStatus) {
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
@@ -26,6 +27,7 @@ public class BeerOrderLine {
         this.quantityAllocated = quantityAllocated;
         this.setBeerOrder(beerOrder);
         this.setBeer(beer);
+        this.setOrderLineStatus(beerOrderLineStatus);
     }
 
     @Id
@@ -66,6 +68,11 @@ public class BeerOrderLine {
 
     @ManyToOne
     private Beer beer;
+
+    // Lo mettiamo di Default su NEW e lo salviamo come String, anche se, su grandi applicazioni, si usano i numeri per salvare spazio negli enum
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private BeerOrderLineStatus orderLineStatus = BeerOrderLineStatus.NEW;
 
     public void setBeer(Beer beer) {
         if (beer != null) {

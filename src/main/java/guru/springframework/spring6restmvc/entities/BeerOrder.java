@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,12 +20,13 @@ import java.util.UUID;
 @Builder
 public class BeerOrder {
 
-    public BeerOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef, Customer customer, Set<BeerOrderLine> beerOrderLines, BeerOrderShipment beerOrderShipment) {
+    public BeerOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef, BigDecimal paymentAmount, Customer customer, Set<BeerOrderLine> beerOrderLines, BeerOrderShipment beerOrderShipment) {
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
+        this.setPaymentAmount(paymentAmount);
         this.setCustomer(customer);
         this.beerOrderLines = beerOrderLines;
         //this.setBeerOrderLines(beerOrderLines);
@@ -53,6 +55,8 @@ public class BeerOrder {
     }
 
     private String customerRef;
+
+    private BigDecimal paymentAmount;
 
     @ManyToOne
     private Customer customer;

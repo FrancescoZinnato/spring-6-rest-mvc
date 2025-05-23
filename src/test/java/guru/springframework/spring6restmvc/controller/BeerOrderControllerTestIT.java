@@ -57,6 +57,8 @@ class BeerOrderControllerTestIT {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void testDeleteOrder() throws Exception {
         BeerOrder beerOrder = beerOrderRepository.findAll().getFirst();
 
@@ -72,6 +74,8 @@ class BeerOrderControllerTestIT {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void testUpdateBeerOrder() throws Exception {
         BeerOrder beerOrder = beerOrderRepository.findAll().getFirst();
         Beer beer = beerRepository.findAll().getFirst();
