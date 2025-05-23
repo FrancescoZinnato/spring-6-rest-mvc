@@ -1,11 +1,10 @@
 package guru.springframework.spring6restmvc.controller;
 
-import guru.springframework.spring6restmvc.model.BeerDTO;
-import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.services.BeerService;
+import guru.springframework.spring6restmvcapi.model.BeerDTO;
+import guru.springframework.spring6restmvcapi.model.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -86,7 +85,7 @@ public class BeerController {
     /**
      * GET /api/v1/beer: get all elements
      * @param beerName (optional) filter research by names that include {@code beerName}
-     * @param beerStyle (optional) filter research by {@link guru.springframework.spring6restmvc.model.BeerStyle}
+     * @param beerStyle (optional) filter research by {@link guru.springframework.spring6restmvcapi.model.BeerStyle}
      * @param pageNumber (optional) max number of pages returned
      * @param pageSize (optional) max number of elements displayed by each page
      * @return {@link Page}<{@link BeerDTO}>

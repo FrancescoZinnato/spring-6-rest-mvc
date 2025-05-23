@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6restmvc.entities.Beer;
 import guru.springframework.spring6restmvc.entities.BeerOrder;
 import guru.springframework.spring6restmvc.entities.Customer;
-import guru.springframework.spring6restmvc.model.*;
 import guru.springframework.spring6restmvc.repositories.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import guru.springframework.spring6restmvc.repositories.CustomerRepository;
+import guru.springframework.spring6restmvcapi.model.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -76,13 +77,14 @@ class BeerOrderControllerTestIT {
     @Test
     @Transactional
     @Rollback
+    @Disabled("Test sostituito da quello sottostante, inoltre si basa su mysql docker img")
     void testUpdateBeerOrder() throws Exception {
         BeerOrder beerOrder = beerOrderRepository.findAll().getFirst();
         Beer beer = beerRepository.findAll().getFirst();
         Customer customer = customerRepository.findAll().getFirst();
 
         BeerOrderUpdateDTO beerOrderUpdateDTO = BeerOrderUpdateDTO.builder()
-                .orderId(beerOrder.getId())
+                //.orderId(beerOrder.getId())
                 .customerRef(beerOrder.getCustomerRef())
                 .customerId(customer.getId())
                 .beerOrderLines(Set.of(BeerOrderLineUpdateDTO.builder()

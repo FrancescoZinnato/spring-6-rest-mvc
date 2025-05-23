@@ -6,15 +6,16 @@ import guru.springframework.spring6restmvc.entities.BeerOrderLine;
 import guru.springframework.spring6restmvc.entities.BeerOrderShipment;
 import guru.springframework.spring6restmvc.entities.Customer;
 import guru.springframework.spring6restmvc.mappers.BeerOrderMapper;
-import guru.springframework.spring6restmvc.model.BeerOrderCreateDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderUpdateDTO;
 import guru.springframework.spring6restmvc.repositories.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import guru.springframework.spring6restmvc.repositories.CustomerRepository;
+import guru.springframework.spring6restmvcapi.model.BeerOrderCreateDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -35,6 +36,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
     private final BeerOrderRepository beerOrderRepository;
     private final CustomerRepository customerRepository;
     private final BeerRepository beerRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;

@@ -2,8 +2,8 @@ package guru.springframework.spring6restmvc.controller;
 
 import guru.springframework.spring6restmvc.entities.Customer;
 import guru.springframework.spring6restmvc.mappers.CustomerMapper;
-import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.repositories.CustomerRepository;
+import guru.springframework.spring6restmvcapi.model.CustomerDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
