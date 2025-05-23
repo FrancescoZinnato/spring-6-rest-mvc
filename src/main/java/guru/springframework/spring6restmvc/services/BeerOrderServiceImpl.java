@@ -9,6 +9,7 @@ import guru.springframework.spring6restmvc.mappers.BeerOrderMapper;
 import guru.springframework.spring6restmvc.repositories.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import guru.springframework.spring6restmvc.repositories.CustomerRepository;
+import guru.springframework.spring6restmvcapi.events.OrderPlacedEvent;
 import guru.springframework.spring6restmvcapi.model.BeerOrderCreateDTO;
 import guru.springframework.spring6restmvcapi.model.BeerOrderDTO;
 import guru.springframework.spring6restmvcapi.model.BeerOrderUpdateDTO;
@@ -105,7 +106,15 @@ public class BeerOrderServiceImpl implements BeerOrderService {
             }
         }
 
-        return beerOrderMapper.beerOrderToBeerOrderDTO(beerOrderRepository.save(order));
+        BeerOrderDTO dto = beerOrderMapper.beerOrderToBeerOrderDTO(beerOrderRepository.save(order));
+
+        if(beerOrderUpdateDTO.getPaymentAmount() != null) {
+            applicationEventPublisher.publishEvent(OrderPlacedEvent.builder()
+                    .beerOrderDTO(dto)
+                    .build());
+        }
+
+        return dto;
     }
 
     @Cacheable(cacheNames = "beerOrderListCache")
