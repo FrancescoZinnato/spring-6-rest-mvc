@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -16,12 +17,13 @@ public class DrinkPreparedListener {
 
     private final BeerOrderLineRepository beerOrderLineRepository;
 
+    @Transactional
     @KafkaListener(groupId = "DrinkPreparedEvent", topics = KafkaConfig.DRINK_PREPARED_TOPIC)
     public void listen(DrinkPreparedEvent drinkPreparedEvent) {
 
         beerOrderLineRepository.findById(drinkPreparedEvent.getBeerOrderLine().getId()).ifPresentOrElse(beerOrderLine -> {
             beerOrderLine.setOrderLineStatus(BeerOrderLineStatus.COMPLETE);
-            beerOrderLineRepository.save(beerOrderLine);
+            beerOrderLineRepository.saveAndFlush(beerOrderLine);
         }, () -> log.error("Beer order line not found in MVC DrinkPreparedListener"));
 
     }
