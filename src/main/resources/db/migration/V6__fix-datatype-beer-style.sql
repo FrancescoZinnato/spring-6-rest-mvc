@@ -1,0 +1,2 @@
+# ALTER TABLE beer
+#     MODIFY COLUMN beer_style SMALLINT NOT NULL CHECK (beer_style BETWEEN 0 AND 9);
